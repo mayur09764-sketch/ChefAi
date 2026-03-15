@@ -1,0 +1,955 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChefAI — Your Smart Kitchen Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF6F1;--primary:#E85D04;--secondary:#F48C06;--white:#FFFFFF;--text:#1A1A1A;--text2:#555;--veg:#16A34A;--nonveg:#DC2626;--muted:#888;--border:#E8E0D8;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+
+/* NAV */
+nav{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;padding:0 5%;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.logo-name{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:var(--primary);}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--text2);font-size:14px;font-weight:600;transition:color .2s;cursor:pointer;}
+.nav-links a:hover{color:var(--primary);}
+.btn-login{background:var(--primary);color:#fff;border:none;padding:9px 22px;border-radius:8px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 3px 12px rgba(232,93,4,.28);}
+.btn-login:hover{background:#cf4f00;transform:translateY(-1px);}
+
+/* HERO */
+.hero{position:relative;height:82vh;min-height:500px;display:flex;align-items:center;overflow:hidden;}
+.hero-img{position:absolute;inset:0;background:linear-gradient(to right,rgba(15,12,10,0.75) 0%,rgba(15,12,10,0.42) 55%,rgba(15,12,10,0.1) 100%),url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&q=85') center/cover no-repeat;}
+.hero-content{position:relative;z-index:2;padding:0 7%;max-width:580px;}
+.hero-content h1{font-family:'Sora',sans-serif;font-size:clamp(2.2rem,4.5vw,3.8rem);font-weight:800;color:#fff;line-height:1.1;margin-bottom:16px;animation:fadeUp .6s ease both;}
+.hero-content h1 span{color:var(--secondary);}
+.hero-content p{font-size:16px;color:rgba(255,255,255,.82);line-height:1.65;margin-bottom:30px;font-weight:400;max-width:440px;animation:fadeUp .6s .12s ease both;}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;animation:fadeUp .6s .22s ease both;}
+.btn-hf{padding:13px 28px;border-radius:8px;border:none;background:var(--primary);color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 18px rgba(232,93,4,.4);transition:all .2s;}
+.btn-hf:hover{background:#cf4f00;transform:translateY(-2px);}
+.btn-ho{padding:13px 28px;border-radius:8px;border:2px solid rgba(255,255,255,.7);background:rgba(255,255,255,.08);color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;backdrop-filter:blur(6px);transition:all .2s;display:flex;align-items:center;gap:6px;}
+.btn-ho:hover{background:rgba(255,255,255,.18);border-color:#fff;transform:translateY(-2px);}
+
+/* SECTIONS */
+.sec{padding:56px 5%;}
+.sec-cream{background:var(--bg);}
+.sec-white{background:#fff;}
+.sec-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+.sec-left{display:flex;align-items:center;gap:12px;}
+.sec-bar{width:4px;height:28px;border-radius:4px;flex-shrink:0;}
+.bar-g{background:var(--veg);}.bar-r{background:var(--nonveg);}.bar-ai{background:linear-gradient(135deg,var(--primary),var(--secondary));}
+.sec-title{font-family:'Sora',sans-serif;font-size:1.45rem;font-weight:700;}
+.view-all{font-size:13px;font-weight:700;color:var(--primary);text-decoration:none;transition:opacity .2s;}
+.view-all:hover{opacity:.7;}
+
+/* DISH CARDS */
+.dish-row{display:flex;gap:18px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.dish-row::-webkit-scrollbar{height:3px;}
+.dish-row::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.dcard{flex:0 0 270px;background:var(--white);border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.09);transition:transform .25s,box-shadow .25s;cursor:pointer;border:1px solid rgba(0,0,0,.05);}
+.dcard:hover{transform:translateY(-5px);box-shadow:0 12px 36px rgba(0,0,0,.14);}
+.dcard-img{position:relative;height:180px;overflow:hidden;background:#f0ebe4;}
+.dcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s;display:block;}
+.dcard:hover .dcard-img img{transform:scale(1.06);}
+.img-fb{width:100%;height:100%;display:none;align-items:center;justify-content:center;font-size:4rem;}
+.bdg{position:absolute;top:10px;right:10px;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:800;letter-spacing:.3px;}
+.bdg-g{background:var(--veg);color:#fff;}.bdg-r{background:var(--nonveg);color:#fff;}
+.heart{position:absolute;top:10px;left:10px;width:30px;height:30px;background:rgba(255,255,255,.92);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:transform .2s;box-shadow:0 2px 8px rgba(0,0,0,.12);}
+.heart:hover{transform:scale(1.15);}
+.dcard-body{padding:14px 16px 16px;}
+.dcard-body h3{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;}
+.dcard-meta{display:flex;gap:14px;margin-bottom:10px;}
+.dm{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted);font-weight:600;}
+.dm.star{color:var(--primary);}
+.btn-view{width:100%;padding:8px 0;border:none;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-view:hover{opacity:.88;transform:translateY(-1px);}
+
+/* ═══ AI RECIPE GENERATOR ═══ */
+.ai-sec{background:linear-gradient(135deg,#0F0C0A 0%,#1A1108 100%);border-top:2px solid rgba(232,93,4,.3);border-bottom:2px solid rgba(232,93,4,.3);position:relative;overflow:hidden;}
+.ai-sec::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(232,93,4,.12) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(244,140,6,.08) 0%,transparent 50%);}
+.ai-inner{max-width:760px;margin:0 auto;text-align:center;position:relative;z-index:1;}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(232,93,4,.15);border:1px solid rgba(232,93,4,.4);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--secondary);margin-bottom:16px;letter-spacing:.5px;}
+.ai-inner h2{font-family:'Sora',sans-serif;font-size:2rem;font-weight:800;margin-bottom:10px;color:#fff;}
+.ai-inner h2 span{background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.ai-inner>p{font-size:15px;color:rgba(255,255,255,.55);margin-bottom:28px;line-height:1.6;}
+.ai-input-wrap{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:20px;margin-bottom:16px;backdrop-filter:blur(10px);}
+.ai-input-row{display:flex;background:rgba(255,255,255,.08);border-radius:10px;border:1.5px solid rgba(255,255,255,.15);overflow:hidden;transition:border-color .2s;margin-bottom:14px;}
+.ai-input-row:focus-within{border-color:var(--primary);}
+.ai-input-row input{flex:1;padding:14px 18px;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:15px;color:#fff;background:transparent;}
+.ai-input-row input::placeholder{color:rgba(255,255,255,.3);}
+.pills{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.pill{padding:7px 18px;border-radius:8px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;}
+.pill.on,.pill:hover{background:var(--primary);color:#fff;border-color:var(--primary);}
+.ai-row2{display:flex;justify-content:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+.csel{padding:9px 18px;border-radius:8px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;color:#fff;cursor:pointer;outline:none;transition:border-color .2s;}
+.csel:focus{border-color:var(--primary);}
+.csel option{background:#1a1108;color:#fff;}
+.btn-gen{padding:15px 44px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-family:'Sora',sans-serif;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 6px 28px rgba(232,93,4,.45);transition:all .2s;width:100%;max-width:360px;display:flex;align-items:center;justify-content:center;gap:8px;margin:0 auto;}
+.btn-gen:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 36px rgba(232,93,4,.55);}
+.btn-gen:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+
+/* AI result box */
+.ai-result{margin-top:24px;background:rgba(255,255,255,.05);border:1.5px solid rgba(232,93,4,.3);border-radius:14px;padding:24px;text-align:left;display:none;animation:fadeUp .4s ease;}
+.ai-result.show{display:block;}
+.ai-result-title{font-family:'Sora',sans-serif;font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:6px;}
+.ai-result-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+.ai-result-meta span{background:rgba(232,93,4,.2);border:1px solid rgba(232,93,4,.3);color:var(--secondary);padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700;}
+.ai-result h4{font-family:'Sora',sans-serif;font-size:13px;font-weight:800;color:rgba(255,255,255,.7);margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px;}
+.ai-ing-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:7px;margin-bottom:20px;}
+.ai-ing-item{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:7px 11px;font-size:13px;color:rgba(255,255,255,.8);font-weight:600;}
+.ai-ing-item span{color:rgba(255,255,255,.4);font-size:11px;margin-left:6px;}
+.ai-steps-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:18px;}
+.ai-step{display:flex;gap:12px;align-items:flex-start;}
+.ai-step-num{width:28px;height:28px;min-width:28px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-family:'Sora',sans-serif;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+.ai-step-text{font-size:14px;line-height:1.65;color:rgba(255,255,255,.75);padding-top:3px;}
+.ai-tip{background:rgba(244,140,6,.1);border:1px solid rgba(244,140,6,.25);border-radius:8px;padding:12px 16px;font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;}
+.ai-tip b{color:var(--secondary);}
+.ai-loading{text-align:center;padding:30px;display:none;}
+.ai-loading.show{display:block;}
+.ai-spinner{width:44px;height:44px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ai-loading p{color:rgba(255,255,255,.5);font-size:14px;}
+.ai-loading .ai-loading-steps{margin-top:8px;font-size:13px;color:rgba(255,255,255,.35);}
+
+/* AI SUGGESTIONS */
+.ai-suggestions{margin-top:18px;display:none;}
+.ai-suggestions.show{display:block;}
+.ai-sug-title{font-size:13px;font-weight:700;color:rgba(255,255,255,.45);margin-bottom:10px;text-align:left;}
+.ai-sug-chips{display:flex;gap:8px;flex-wrap:wrap;}
+.ai-sug-chip{padding:7px 14px;border-radius:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;}
+.ai-sug-chip:hover{background:rgba(232,93,4,.2);border-color:var(--primary);color:#fff;}
+
+/* ═══ WEEKLY MEAL PLANNER ═══ */
+.planner-sec{background:linear-gradient(135deg,#FFF8F2 0%,#FFF3E8 100%);}
+.planner-head{font-family:'Sora',sans-serif;font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.planner-sub{color:var(--text2);font-size:15px;margin-bottom:24px;}
+.planner-controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;align-items:center;}
+.planner-sel{padding:9px 16px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;color:var(--text);cursor:pointer;outline:none;}
+.planner-sel:focus{border-color:var(--primary);}
+.btn-plan{padding:10px 22px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 14px rgba(232,93,4,.32);transition:all .2s;display:flex;align-items:center;gap:6px;}
+.btn-plan:hover:not(:disabled){transform:translateY(-1px);}
+.btn-plan:disabled{opacity:.6;cursor:not-allowed;}
+.planner-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:20px;}
+.plan-day{background:#fff;border-radius:12px;padding:12px 10px;box-shadow:0 2px 12px rgba(0,0,0,.07);border:1px solid rgba(0,0,0,.05);min-height:200px;}
+.plan-day-label{font-family:'Sora',sans-serif;font-size:12px;font-weight:800;color:var(--primary);text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.plan-meal{background:var(--bg);border-radius:8px;padding:8px 9px;margin-bottom:7px;border:1px solid var(--border);}
+.plan-meal-type{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.plan-meal-name{font-size:12px;font-weight:700;color:var(--text);line-height:1.3;}
+.plan-meal-cal{font-size:10px;color:var(--muted);margin-top:2px;}
+.plan-meal.loading{opacity:.5;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:.5;}50%{opacity:.8;}}
+.plan-empty{text-align:center;color:var(--muted);font-size:12px;padding:20px 0;}
+.plan-loading-overlay{text-align:center;padding:40px;display:none;}
+.plan-loading-overlay.show{display:block;}
+.plan-spinner{width:40px;height:40px;border:3px solid rgba(232,93,4,.15);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+.plan-loading-overlay p{color:var(--text2);font-size:14px;font-weight:600;}
+.plan-summary{background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 2px 12px rgba(0,0,0,.07);border:1px solid rgba(0,0,0,.05);display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;}
+.plan-stat{text-align:center;flex:1;min-width:80px;}
+.plan-stat-val{font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:800;color:var(--primary);}
+.plan-stat-lbl{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;}
+
+/* SHOPPING */
+.shop-h{font-family:'Sora',sans-serif;font-size:1.6rem;font-weight:800;margin-bottom:8px;}
+.shop-sub{color:var(--text2);font-size:15px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.shop-count{font-size:14px;font-weight:700;color:var(--primary);background:rgba(232,93,4,.1);padding:4px 12px;border-radius:20px;}
+.shop-card{max-width:480px;background:var(--white);border-radius:16px;padding:8px 0;box-shadow:0 2px 16px rgba(0,0,0,.09);margin-bottom:20px;border:1px solid rgba(0,0,0,.05);min-height:100px;transition:all 0.3s;}
+.si{display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid #F5EDE4;}
+.si:last-child{border-bottom:none;}
+.si input[type=checkbox]{width:17px;height:17px;accent-color:var(--primary);cursor:pointer;flex-shrink:0;}
+.iname{flex:1;font-size:15px;font-weight:600;}
+.iqty{font-size:13px;color:var(--muted);font-weight:600;background:#F5EDE4;padding:3px 10px;border-radius:6px;}
+.si.done .iname{text-decoration:line-through;color:var(--muted);}
+.btn-remove{background:transparent;border:none;color:#999;font-size:16px;cursor:pointer;padding:4px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.btn-remove:hover{color:#dc2626;background:#fee2e2;}
+.shop-empty{text-align:center;padding:30px 20px;color:var(--muted);font-size:14px;font-weight:600;}
+.shop-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.btn-f{padding:11px 22px;border-radius:8px;border:none;background:var(--primary);color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 12px rgba(232,93,4,.28);transition:all .2s;}
+.btn-f:hover{background:#cf4f00;transform:translateY(-1px);}
+.btn-o{padding:11px 22px;border-radius:8px;border:2px solid var(--primary);background:transparent;color:var(--primary);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-o:hover{background:var(--primary);color:#fff;transform:translateY(-1px);}
+.snote{font-size:12px;color:var(--muted);}
+
+/* FEATURES */
+.feat-h{font-family:'Sora',sans-serif;font-size:1.65rem;font-weight:800;text-align:center;margin-bottom:36px;}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;}
+.fc{background:var(--white);border-radius:14px;padding:28px 22px;box-shadow:0 2px 16px rgba(0,0,0,.08);border:1px solid rgba(0,0,0,.04);border-top:3px solid transparent;transition:border-color .22s,transform .22s,box-shadow .22s;}
+.fc:hover{border-top-color:var(--primary);transform:translateY(-5px);box-shadow:0 14px 32px rgba(232,93,4,.1);}
+.fi{width:48px;height:48px;background:linear-gradient(135deg,#FFF0E0,#FFE2C4);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:16px;}
+.fc h3{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:7px;}
+.fc p{font-size:13px;color:var(--text2);line-height:1.6;}
+
+/* FOOTER */
+footer{background:#1A1A1A;color:rgba(255,255,255,.65);padding:56px 5% 24px;}
+.fg{display:grid;grid-template-columns:1.8fr 1fr 1fr;gap:48px;margin-bottom:40px;}
+.fb .logo-name{color:var(--secondary);}
+.fb p{font-size:13px;color:rgba(255,255,255,.4);line-height:1.7;margin-top:12px;max-width:280px;}
+.fcol h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:16px;}
+.fcol ul{list-style:none;}
+.fcol li{margin-bottom:10px;}
+.fcol a{color:rgba(255,255,255,.45);text-decoration:none;font-size:13px;transition:color .2s;}
+.fcol a:hover{color:var(--secondary);}
+.socials{display:flex;gap:10px;margin-top:4px;}
+.soc{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;transition:all .2s;}
+.soc:hover{background:var(--primary);transform:translateY(-2px);}
+.fbot{border-top:1px solid rgba(255,255,255,.08);padding-top:20px;text-align:center;font-size:12px;color:rgba(255,255,255,.3);}
+.fwelcome{background:linear-gradient(135deg,rgba(232,93,4,.18),rgba(244,140,6,.12));border:1px solid rgba(232,93,4,.3);border-radius:12px;padding:16px 24px;margin-bottom:28px;display:flex;align-items:center;gap:14px;}
+.fwelcome-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.fwelcome-text .fw-greeting{font-size:13px;color:rgba(255,255,255,.5);font-weight:600;margin-bottom:2px;}
+.fwelcome-text .fw-name{font-family:'Sora',sans-serif;font-size:17px;font-weight:800;color:#fff;}
+.fwelcome-text .fw-name span{color:var(--secondary);}
+.fwelcome-text .fw-sub{font-size:12px;color:rgba(255,255,255,.4);margin-top:3px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:999;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:20px;width:100%;max-width:780px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.3);animation:modalIn .3s ease;}
+@keyframes modalIn{from{opacity:0;transform:scale(.94) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-hero{position:relative;height:220px;flex-shrink:0;background:#f0ebe4;}
+.modal-hero img{width:100%;height:100%;object-fit:cover;display:block;}
+.modal-hero-fb{width:100%;height:100%;display:none;align-items:center;justify-content:center;font-size:5rem;}
+.modal-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.62) 0%,rgba(0,0,0,.08) 60%);}
+.modal-close{position:absolute;top:14px;right:14px;width:36px;height:36px;background:rgba(255,255,255,.92);border:none;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .2s;box-shadow:0 2px 10px rgba(0,0,0,.2);z-index:2;}
+.modal-close:hover{background:#fff;transform:scale(1.1);}
+.modal-title-bar{position:absolute;bottom:16px;left:20px;right:60px;z-index:2;}
+.modal-title-bar h2{font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:800;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5);}
+.modal-title-bar .mbdg{display:inline-block;padding:3px 12px;border-radius:6px;font-size:11px;font-weight:800;margin-bottom:6px;}
+.modal-body{overflow-y:auto;padding:24px 28px 32px;flex:1;}
+.modal-body::-webkit-scrollbar{width:4px;}
+.modal-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.modal-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;}
+.mstat{display:flex;align-items:center;gap:6px;background:#FFF5ED;border:1px solid #F0DDD0;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;color:var(--text2);}
+.mstat span{font-size:15px;}
+.section-head{font-family:'Sora',sans-serif;font-size:15px;font-weight:800;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.section-head::after{content:'';flex:1;height:1px;background:var(--border);}
+.ing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:9px;margin-bottom:26px;}
+.ing-chip{display:flex;align-items:center;gap:8px;background:#FAFAFA;border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13px;font-weight:600;}
+.ing-chip .ico{font-size:17px;flex-shrink:0;}
+.ing-chip .itext{flex:1;line-height:1.3;}
+.ing-chip .qty{font-size:11px;color:var(--muted);background:#F0E8E0;padding:2px 8px;border-radius:5px;font-weight:700;white-space:nowrap;flex-shrink:0;}
+.steps-list{list-style:none;display:flex;flex-direction:column;gap:14px;margin-bottom:16px;}
+.step{display:flex;gap:14px;align-items:flex-start;}
+.step-num{width:30px;height:30px;min-width:30px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+.step-text{font-size:14px;line-height:1.7;color:var(--text2);padding-top:4px;}
+.step-text strong{color:var(--text);}
+.tip-box{background:linear-gradient(135deg,#FFF8F0,#FFF3E6);border:1px solid #F0DDD0;border-radius:10px;padding:14px 18px;font-size:13px;color:var(--text2);line-height:1.65;}
+.tip-box b{color:var(--primary);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@media(max-width:900px){.planner-grid{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:768px){
+  .nav-links{display:none;}
+  .hero-content{padding:0 6%;}
+  .fg{grid-template-columns:1fr;gap:24px;}
+  .sec{padding:40px 5%;}
+  .planner-grid{grid-template-columns:repeat(2,1fr);}
+  .modal-body{padding:18px 18px 24px;}
+  .ing-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-icon">🍴</div>
+    <span class="logo-name">ChefAI</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#dishes">Home</a></li>
+    <li><a href="#meal-planner">Meal Planner</a></li>
+    <li><a href="#ai-section">AI Generator</a></li>
+    <li><a href="#shopping">Shopping List</a></li>
+  </ul>
+  {% if session.get('username') %}
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:13px;font-weight:700;color:var(--text2);">👋 {{ session['username'] }}</span>
+      <a href="/logout" class="btn-login" style="text-decoration:none;display:inline-flex;align-items:center;background:#555;">Logout</a>
+    </div>
+  {% else %}
+    <a href="/login" class="btn-login" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">Login / Sign Up</a>
+  {% endif %}
+</nav>
+
+<div class="hero">
+  <div class="hero-img"></div>
+  <div class="hero-content">
+    <h1>Discover &amp; Cook<br><span>Amazing Recipes</span></h1>
+    <p>Browse authentic dishes or let our AI create a personalized recipe from the ingredients you already have in your kitchen.</p>
+    <div class="hero-btns">
+      <button class="btn-hf" onclick="document.getElementById('dishes').scrollIntoView({behavior:'smooth'})">Browse Dishes</button>
+      <button class="btn-ho" onclick="document.getElementById('ai-section').scrollIntoView({behavior:'smooth'})">Generate with AI ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- DISH SECTIONS -->
+<section class="sec sec-cream" id="dishes">
+  <div class="sec-top">
+    <div class="sec-left"><div class="sec-bar bar-g"></div><span class="sec-title">🥗 Vegetarian Dishes</span></div>
+    <a href="#" class="view-all">View All →</a>
+  </div>
+  <div class="dish-row" id="vr"></div>
+</section>
+
+<section class="sec sec-white">
+  <div class="sec-top">
+    <div class="sec-left"><div class="sec-bar bar-r"></div><span class="sec-title">🍗 Non-Vegetarian Dishes</span></div>
+    <a href="#" class="view-all">View All →</a>
+  </div>
+  <div class="dish-row" id="nr"></div>
+</section>
+
+<!-- ═══════════ AI RECIPE GENERATOR ═══════════ -->
+<section class="sec ai-sec" id="ai-section">
+  <div class="ai-inner">
+    <div class="ai-badge">✦ Powered by Gemini 1.5 Flash</div>
+    <h2>What's in your kitchen? <span>Let AI cook.</span></h2>
+    <p>Type any ingredients you have and Gemini 1.5 Flash will instantly create a personalized recipe just for you</p>
+    <div class="ai-input-wrap">
+      <div class="ai-input-row">
+        <input type="text" id="aiIngredients" placeholder="e.g. paneer, tomato, onion, garam masala, cream..." onkeydown="if(event.key==='Enter') generateRecipe()">
+      </div>
+      <div class="pills">
+        <button class="pill on" onclick="setPill(this)">All</button>
+        <button class="pill" onclick="setPill(this)">Vegetarian</button>
+        <button class="pill" onclick="setPill(this)">Non-Veg</button>
+        <button class="pill" onclick="setPill(this)">Vegan</button>
+      </div>
+      <div class="ai-row2">
+        <select class="csel" id="aiCuisine">
+          <option>🇮🇳 Indian</option>
+          <option>🇮🇹 Italian</option>
+          <option>🇨🇳 Chinese</option>
+          <option>🇲🇽 Mexican</option>
+          <option>🌍 Any Cuisine</option>
+        </select>
+        <select class="csel" id="aiServings">
+          <option>Serves 2</option>
+          <option selected>Serves 4</option>
+          <option>Serves 6</option>
+        </select>
+        <select class="csel" id="aiDifficulty">
+          <option>Easy</option>
+          <option selected>Medium</option>
+          <option>Hard</option>
+        </select>
+      </div>
+      <button class="btn-gen" id="genBtn" onclick="generateRecipe()">
+        <span id="genBtnText">✦ Generate My Recipe</span>
+      </button>
+    </div>
+
+    <!-- AI Suggestions -->
+    <div class="ai-suggestions" id="aiSuggestions">
+      <div class="ai-sug-title">✨ Try one of these combinations:</div>
+      <div class="ai-sug-chips" id="aiSugChips"></div>
+    </div>
+
+    <!-- Loading -->
+    <div class="ai-loading" id="aiLoading">
+      <div class="ai-spinner"></div>
+      <p id="aiLoadingText">Gemini 1.5 Flash is crafting your recipe...</p>
+      <div class="ai-loading-steps" id="aiLoadingStep">Analysing your ingredients</div>
+    </div>
+
+    <!-- Result -->
+    <div class="ai-result" id="aiResult">
+      <div class="ai-result-title" id="aiDishName"></div>
+      <div class="ai-result-meta" id="aiDishMeta"></div>
+      <h4>🥕 Ingredients</h4>
+      <div class="ai-ing-list" id="aiIngList"></div>
+      <h4>👨‍🍳 Step-by-Step Guide</h4>
+      <ol class="ai-steps-list" id="aiStepsList"></ol>
+      <div class="ai-tip" id="aiTipBox"></div>
+      <button class="btn-gen" style="margin-top:20px; font-size:14px; padding:12px 24px;" onclick="addToShoppingAI()">
+        🛒 Add to Shopping List
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ WEEKLY MEAL PLANNER ═══════════ -->
+<section class="sec planner-sec" id="meal-planner">
+  <h2 class="planner-head">📅 Weekly Meal Planner</h2>
+  <p class="planner-sub">Let Gemini 1.5 Flash plan your entire week — balanced, delicious, and personalised</p>
+
+  <div class="planner-controls">
+    <select class="planner-sel" id="planDiet">
+      <option value="vegetarian">🥗 Vegetarian</option>
+      <option value="non-vegetarian">🍗 Non-Vegetarian</option>
+      <option value="mixed" selected>🍽️ Mixed</option>
+      <option value="vegan">🌿 Vegan</option>
+    </select>
+    <select class="planner-sel" id="planCuisine">
+      <option value="Indian">🇮🇳 Indian</option>
+      <option value="mixed" selected>🌍 Mixed Cuisines</option>
+      <option value="Italian">🇮🇹 Italian</option>
+      <option value="Chinese">🇨🇳 Chinese</option>
+    </select>
+    <select class="planner-sel" id="planCalories">
+      <option value="1500">~1500 kcal/day</option>
+      <option value="2000" selected>~2000 kcal/day</option>
+      <option value="2500">~2500 kcal/day</option>
+    </select>
+    <button class="btn-plan" id="planBtn" onclick="generateMealPlan()">
+      <span id="planBtnText">✦ Generate Meal Plan</span>
+    </button>
+    <button class="btn-plan" style="background:#fff;color:var(--primary);border:2px solid var(--primary);box-shadow:none;" onclick="exportPlan()">📋 Export Plan</button>
+    <button class="btn-plan" id="planShopBtn" style="display:none;background:var(--veg);box-shadow:0 3px 14px rgba(22,163,74,.32);" onclick="addToShoppingPlan()">🛒 Generate Shopping List</button>
+  </div>
+
+  <div class="plan-loading-overlay" id="planLoading">
+    <div class="plan-spinner"></div>
+    <p>Gemini 1.5 Flash is building your 7-day meal plan...</p>
+  </div>
+
+  <div id="planSummary" style="display:none;">
+    <div class="plan-summary" id="planSummaryBox"></div>
+  </div>
+
+  <div class="planner-grid" id="plannerGrid">
+    <!-- Days generated by JS -->
+    <div class="plan-day"><div class="plan-day-label">MON</div><div class="plan-empty">Generate a plan to see meals</div></div>
+    <div class="plan-day"><div class="plan-day-label">TUE</div><div class="plan-empty"></div></div>
+    <div class="plan-day"><div class="plan-day-label">WED</div><div class="plan-empty"></div></div>
+    <div class="plan-day"><div class="plan-day-label">THU</div><div class="plan-empty"></div></div>
+    <div class="plan-day"><div class="plan-day-label">FRI</div><div class="plan-empty"></div></div>
+    <div class="plan-day"><div class="plan-day-label">SAT</div><div class="plan-empty"></div></div>
+    <div class="plan-day"><div class="plan-day-label">SUN</div><div class="plan-empty"></div></div>
+  </div>
+</section>
+
+<!-- SHOPPING LIST -->
+<section class="sec sec-cream" id="shopping">
+  <h2 class="shop-h">🛒 Your Shopping List</h2>
+  <div class="shop-sub">
+    <span>Never forget an ingredient — generate your list from any recipe</span>
+    <span class="shop-count" id="shopCount">0 items</span>
+  </div>
+  <div class="shop-card" id="shopCard">
+    <div class="shop-empty">Your shopping list is empty!</div>
+  </div>
+  <div class="shop-btns">
+    <button class="btn-f" onclick="copyShoppingList()">📋 Copy List</button>
+    <button class="btn-o" onclick="clearShoppingList()">🗑️ Clear All</button>
+  </div>
+  <p class="snote" id="shopNote">Shopping list tracks all your added ingredients.</p>
+</section>
+
+<section class="sec sec-white">
+  <p class="feat-h">Everything you need in one kitchen assistant</p>
+  <div class="feat-grid">
+    <div class="fc"><div class="fi">🤖</div><h3>AI Recipe Generator</h3><p>Enter ingredients, get instant personalized recipes crafted by Gemini 1.5 Flash just for you.</p></div>
+    <div class="fc"><div class="fi">📅</div><h3>Weekly Meal Planner</h3><p>AI plans your entire week with balanced, calorie-tracked meal suggestions.</p></div>
+    <div class="fc"><div class="fi">🔥</div><h3>Calorie Tracker</h3><p>Track nutrition for every meal and stay on top of your health goals.</p></div>
+    <div class="fc"><div class="fi">❤️</div><h3>Save Favourites</h3><p>Build your personal recipe collection and access it anytime.</p></div>
+  </div>
+</section>
+
+<footer>
+  {% if session.get('username') %}
+  <div class="fwelcome">
+    <div class="fwelcome-icon">👨‍🍳</div>
+    <div class="fwelcome-text">
+      <div class="fw-greeting">Welcome back,</div>
+      <div class="fw-name"><span>{{ session['username'] }}</span> 👋</div>
+      <div class="fw-sub">🌅 Start your day with a fresh, delicious meal!</div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="fg">
+    <div class="fb">
+      <div class="logo"><div class="logo-icon">🍴</div><span class="logo-name">ChefAI</span></div>
+      <p>Cook smarter with AI. Your intelligent kitchen companion for discovering, planning, and cooking amazing recipes every day.</p>
+    </div>
+    <div class="fcol">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#">Home</a></li><li><a href="#meal-planner">Meal Planner</a></li>
+        <li><a href="#ai-section">AI Generator</a></li><li><a href="#shopping">Shopping List</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div class="fcol">
+      <h4>Follow Us</h4>
+      <div class="socials"><div class="soc">📸</div><div class="soc">🐦</div><div class="soc">💼</div></div>
+    </div>
+  </div>
+  <div class="fbot">© 2025 ChefAI. All rights reserved. Made with ❤️ for food lovers.</div>
+</footer>
+
+<!-- RECIPE MODAL -->
+<div class="modal-overlay" id="recipeModal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-hero">
+      <img id="mImg" src="" alt="">
+      <div class="modal-hero-fb" id="mFb"></div>
+      <div class="modal-hero-overlay"></div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+      <div class="modal-title-bar">
+        <div id="mBdg" class="mbdg"></div>
+        <h2 id="mTitle"></h2>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-stats" id="mStats"></div>
+      <div class="section-head">🥕 Ingredients</div>
+      <div class="ing-grid" id="mIngredients"></div>
+      <div class="section-head">👨‍🍳 Step-by-Step Guide</div>
+      <ol class="steps-list" id="mSteps"></ol>
+      <div class="tip-box" id="mTip"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══ GEMINI API INTEGRATION ═══
+// Key moved to backend server to avoid CORS and ensure security
+async function callGemini(systemPrompt, userPrompt, maxTokens=1800) {
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ systemPrompt, userPrompt, maxTokens })
+    });
+    
+    if (!res.ok) {
+      let errText = await res.text();
+      console.error("API Error Response:", errText);
+      throw new Error(`API error ${res.status}`);
+    }
+    
+    const data = await res.json();
+    return data.choices[0].message.content;
+  } catch (error) {
+    console.error("Fetch failed:", error);
+    throw error;
+  }
+}
+
+// ═══ DISH DATA ═══
+const veg=[
+  {n:"Dal Makhani",t:"30 mins",c:"350 kcal",r:"4.8",em:"🍲",img:"https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=500&q=80",bg:"linear-gradient(135deg,#FFD6A0,#FFA040)",ing:[{ico:"🫘",name:"Whole Black Urad Dal",qty:"1 cup"},{ico:"🫘",name:"Rajma (Kidney Beans)",qty:"¼ cup"},{ico:"🧈",name:"Butter",qty:"3 tbsp"},{ico:"🫙",name:"Fresh Cream",qty:"4 tbsp"},{ico:"🍅",name:"Tomato Puree",qty:"½ cup"},{ico:"🧅",name:"Onion",qty:"1 large"},{ico:"🧄",name:"Garlic",qty:"6 cloves"},{ico:"🌿",name:"Ginger",qty:"1 inch"},{ico:"🌶️",name:"Red Chilli Powder",qty:"1 tsp"},{ico:"🫙",name:"Garam Masala",qty:"1 tsp"},{ico:"🫙",name:"Coriander Powder",qty:"1 tsp"},{ico:"🧂",name:"Salt",qty:"to taste"}],steps:["<strong>Soak overnight:</strong> Soak urad dal and rajma in plenty of water overnight. Drain before cooking.","<strong>Pressure cook:</strong> Add soaked dal, rajma, 3 cups water, and salt. Cook for 6–8 whistles until completely soft. Lightly mash with a ladle.","<strong>Make the masala:</strong> Heat butter in a heavy pan. Sauté onions until deep golden brown (~12 mins). Add garlic and ginger, cook 2 mins.","<strong>Add tomatoes & spices:</strong> Stir in tomato puree, red chilli powder, and coriander powder. Cook on medium heat until oil separates (~8 mins).","<strong>Combine & simmer:</strong> Add the cooked dal to the masala. Simmer on very low heat for 20–25 mins, stirring occasionally.","<strong>Finish:</strong> Stir in fresh cream and garam masala. Simmer 5 more mins. Top with a knob of butter and serve hot."],tip:"💡 <b>Chef's Tip:</b> The longer you simmer Dal Makhani on a low flame, the richer the flavour. Restaurant-style dal is often slow-cooked for 4–6 hours!"},
+  {n:"Paneer Butter Masala",t:"25 mins",c:"450 kcal",r:"4.9",em:"🧆",img:"https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&q=80",bg:"linear-gradient(135deg,#FFB3A0,#FF6030)",ing:[{ico:"🧀",name:"Paneer (cubed)",qty:"250g"},{ico:"🍅",name:"Tomatoes",qty:"3 large"},{ico:"🧅",name:"Onion",qty:"2 medium"},{ico:"🧄",name:"Garlic",qty:"5 cloves"},{ico:"🌿",name:"Ginger",qty:"1 inch"},{ico:"🧈",name:"Butter",qty:"2 tbsp"},{ico:"🫙",name:"Fresh Cream",qty:"3 tbsp"},{ico:"🌰",name:"Cashews",qty:"10 pcs"},{ico:"🌶️",name:"Kashmiri Red Chilli",qty:"1.5 tsp"},{ico:"🫙",name:"Garam Masala",qty:"1 tsp"},{ico:"🫙",name:"Kasuri Methi",qty:"1 tsp"},{ico:"🧂",name:"Salt & Sugar",qty:"to taste"}],steps:["<strong>Make the base puree:</strong> Boil onions, tomatoes, garlic, ginger, and cashews together for 10 mins. Cool and blend into a very smooth puree.","<strong>Fry the masala:</strong> Heat butter in a pan. Add the blended puree and cook on medium heat until it thickens and butter separates (~10 mins).","<strong>Spice it up:</strong> Add Kashmiri red chilli, garam masala, and a pinch of sugar. Stir well and cook 3 mins.","<strong>Add paneer:</strong> Gently add paneer cubes. Mix carefully. Add ½ cup water. Simmer 5 mins.","<strong>Finish:</strong> Crush kasuri methi and add. Pour in fresh cream, stir gently, and serve."],tip:"💡 <b>Chef's Tip:</b> Lightly pan-fry paneer cubes in butter before adding — it creates a golden crust and prevents crumbling."},
+  {n:"Veg Biryani",t:"40 mins",c:"400 kcal",r:"4.7",em:"🍛",img:"https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&q=80",bg:"linear-gradient(135deg,#B5EAD7,#5CB87A)",ing:[{ico:"🍚",name:"Basmati Rice",qty:"2 cups"},{ico:"🥕",name:"Mixed Vegetables",qty:"2 cups"},{ico:"🧅",name:"Onion (sliced)",qty:"2 large"},{ico:"🍅",name:"Tomato",qty:"1 large"},{ico:"🧄",name:"Garlic-Ginger Paste",qty:"2 tbsp"},{ico:"🫙",name:"Biryani Masala",qty:"2 tbsp"},{ico:"🌿",name:"Mint & Coriander",qty:"large handful"},{ico:"🥛",name:"Curd",qty:"½ cup"},{ico:"🌸",name:"Saffron in warm milk",qty:"few strands"},{ico:"🛢️",name:"Ghee",qty:"3 tbsp"},{ico:"🌿",name:"Whole Spices",qty:"bay leaf, cloves, cardamom"},{ico:"🧂",name:"Salt",qty:"to taste"}],steps:["<strong>Parboil rice:</strong> Soak basmati 30 mins. Boil with whole spices and salt until 70% done. Drain.","<strong>Crispy onions:</strong> Fry sliced onions in ghee until crispy golden brown. Remove half for layering.","<strong>Cook vegetables:</strong> In the same pan, add garlic-ginger paste, tomatoes, biryani masala, vegetables, and curd. Cook until tender.","<strong>Layer:</strong> Spread veggie masala at base. Add half the rice. Scatter mint, coriander, fried onions. Layer remaining rice.","<strong>Dum cook:</strong> Drizzle saffron milk and ghee. Cover tightly. High heat 3 mins, then lowest heat 20 mins.","<strong>Serve:</strong> Gently mix from sides. Serve with raita."],tip:"💡 <b>Chef's Tip:</b> Seal the pot with dough instead of foil for perfect dum that traps all the aromatic steam inside."},
+  {n:"Margherita Pizza",t:"30 mins",c:"290 kcal",r:"4.6",em:"🍕",img:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=500&q=80",bg:"linear-gradient(135deg,#FFE4A0,#FFC300)",ing:[{ico:"🍞",name:"Pizza Dough (250g ball)",qty:"1 pc"},{ico:"🍅",name:"Tomato Passata",qty:"½ cup"},{ico:"🧀",name:"Fresh Mozzarella",qty:"200g"},{ico:"🌿",name:"Fresh Basil Leaves",qty:"10–12"},{ico:"🧄",name:"Garlic (minced)",qty:"2 cloves"},{ico:"🫒",name:"Extra Virgin Olive Oil",qty:"2 tbsp"},{ico:"🧂",name:"Salt & Black Pepper",qty:"to taste"},{ico:"🌶️",name:"Red Chilli Flakes",qty:"pinch"}],steps:["<strong>Preheat oven:</strong> Heat to 250°C. Place pizza stone inside to preheat.","<strong>Prepare sauce:</strong> Mix tomato passata with minced garlic, salt, and 1 tbsp olive oil.","<strong>Shape dough:</strong> Stretch dough by hand into a 30cm circle. Keep edges slightly thicker.","<strong>Assemble:</strong> Spread sauce, leaving a 2cm border. Tear mozzarella and scatter. Season.","<strong>Bake:</strong> Slide onto hot stone. Bake 10–12 mins until golden and charred.","<strong>Finish:</strong> Top with fresh basil and remaining olive oil immediately after baking."],tip:"💡 <b>Chef's Tip:</b> Add basil AFTER baking — heat destroys its flavour and turns it black."},
+  {n:"Chole Bhature",t:"45 mins",c:"460 kcal",r:"4.8",em:"🫓",img:"https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=500&q=80",bg:"linear-gradient(135deg,#FFB347,#E85D04)",ing:[{ico:"🫘",name:"Chickpeas (soaked overnight)",qty:"2 cups"},{ico:"🧅",name:"Onion",qty:"2 large"},{ico:"🍅",name:"Tomatoes",qty:"2 large"},{ico:"🧄",name:"Garlic-Ginger Paste",qty:"2 tbsp"},{ico:"🌶️",name:"Chole Masala",qty:"2 tbsp"},{ico:"🌿",name:"Anardana",qty:"1 tsp"},{ico:"🍞",name:"Maida",qty:"2 cups"},{ico:"🥛",name:"Curd",qty:"3 tbsp"},{ico:"🛢️",name:"Oil for frying",qty:"as needed"},{ico:"🫙",name:"Baking Soda",qty:"¼ tsp"},{ico:"🍵",name:"Tea Bag",qty:"1"},{ico:"🧂",name:"Salt",qty:"to taste"}],steps:["<strong>Pressure cook chickpeas:</strong> Cook with tea bag, bay leaf, and salt for 5–6 whistles.","<strong>Make masala:</strong> Sauté onions until golden. Add garlic-ginger paste, tomato puree, chole masala, anardana. Cook until oil separates.","<strong>Finish chole:</strong> Add chickpeas with cooking water. Simmer 15 mins. Mash a few chickpeas to thicken.","<strong>Make bhature dough:</strong> Mix maida, curd, baking soda, salt, oil. Knead smooth. Rest 20 mins.","<strong>Fry bhature:</strong> Roll into ovals. Deep fry in very hot oil until golden and puffed.","<strong>Serve:</strong> Serve chole alongside hot bhature with sliced onion and green chutney."],tip:"💡 <b>Chef's Tip:</b> Adding a tea bag while pressure cooking gives chole its signature dark colour — a dhaba secret!"},
+  {n:"Palak Paneer",t:"30 mins",c:"280 kcal",r:"4.7",em:"🥘",img:"https://images.unsplash.com/photo-1596797038530-2c107229654b?w=500&q=80",bg:"linear-gradient(135deg,#A8E6CF,#3DB86A)",ing:[{ico:"🥬",name:"Fresh Spinach",qty:"4 cups"},{ico:"🧀",name:"Paneer (cubed)",qty:"200g"},{ico:"🧅",name:"Onion",qty:"1 large"},{ico:"🍅",name:"Tomato",qty:"1 medium"},{ico:"🧄",name:"Garlic",qty:"4 cloves"},{ico:"🌿",name:"Ginger",qty:"1 inch"},{ico:"🌶️",name:"Green Chillies",qty:"2"},{ico:"🛢️",name:"Ghee / Butter",qty:"2 tbsp"},{ico:"🫙",name:"Cumin Seeds",qty:"1 tsp"},{ico:"🫙",name:"Garam Masala",qty:"½ tsp"},{ico:"🥛",name:"Fresh Cream",qty:"2 tbsp"},{ico:"🧂",name:"Salt",qty:"to taste"}],steps:["<strong>Blanch spinach:</strong> Boil spinach in salted water for 2 mins. Transfer to ice-cold water immediately. Drain well.","<strong>Make puree:</strong> Blend blanched spinach, green chillies, and a little water into a vibrant smooth puree.","<strong>Cook base:</strong> Heat ghee, add cumin seeds. Add onions until translucent. Add garlic, ginger, tomato. Cook 5 mins.","<strong>Combine:</strong> Add spinach puree, salt. Cook on medium heat 8 mins.","<strong>Add paneer:</strong> Fold in paneer cubes. Stir in garam masala. Simmer 5 mins.","<strong>Finish:</strong> Drizzle fresh cream. Serve with roti or jeera rice."],tip:"💡 <b>Chef's Tip:</b> The ice bath after blanching is THE secret to restaurant-quality vibrant green palak paneer. Never skip it!"},
+];
+const nv=[
+  {n:"Butter Chicken",t:"50 mins",c:"410 kcal",r:"4.9",em:"🍗",img:"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=500&q=80",bg:"linear-gradient(135deg,#FF9A8B,#D63031)",ing:[{ico:"🍗",name:"Boneless Chicken",qty:"500g"},{ico:"🥛",name:"Curd",qty:"½ cup"},{ico:"🌶️",name:"Kashmiri Red Chilli",qty:"2 tsp"},{ico:"🍋",name:"Lemon Juice",qty:"1 tbsp"},{ico:"🍅",name:"Tomatoes",qty:"4 large"},{ico:"🧅",name:"Onion",qty:"2 medium"},{ico:"🧄",name:"Garlic",qty:"8 cloves"},{ico:"🌿",name:"Ginger",qty:"2 inch"},{ico:"🧈",name:"Butter",qty:"3 tbsp"},{ico:"🫙",name:"Fresh Cream",qty:"½ cup"},{ico:"🌰",name:"Cashews",qty:"12 pcs"},{ico:"🫙",name:"Kasuri Methi & Garam Masala",qty:"1 tsp each"}],steps:["<strong>Marinate:</strong> Mix chicken with curd, red chilli, lemon juice, salt, garlic-ginger paste. Marinate minimum 2 hours.","<strong>Grill or sear:</strong> Cook marinated chicken in a very hot pan until slightly charred. Set aside.","<strong>Make sauce:</strong> Sauté onions, garlic, ginger, tomatoes, and cashews. Cook 10 mins. Blend super smooth.","<strong>Cook gravy:</strong> Melt butter. Add blended sauce through a sieve. Cook until butter surfaces (~10 mins).","<strong>Add chicken & cream:</strong> Add grilled chicken. Pour in cream. Add crushed kasuri methi and garam masala. Simmer 10 mins.","<strong>Serve:</strong> Garnish with cream swirl. Serve with butter naan or rice."],tip:"💡 <b>Chef's Tip:</b> Straining the gravy through a fine sieve gives Butter Chicken its iconic silky-smooth restaurant texture."},
+  {n:"Chicken Biryani",t:"70 mins",c:"520 kcal",r:"4.9",em:"🍛",img:"https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500&q=80",bg:"linear-gradient(135deg,#FFECD2,#FCB69F)",ing:[{ico:"🍗",name:"Chicken (bone-in)",qty:"750g"},{ico:"🍚",name:"Basmati Rice",qty:"2.5 cups"},{ico:"🥛",name:"Curd",qty:"1 cup"},{ico:"🧅",name:"Onion (thinly sliced)",qty:"3 large"},{ico:"🍅",name:"Tomatoes",qty:"2 medium"},{ico:"🧄",name:"Garlic-Ginger Paste",qty:"3 tbsp"},{ico:"🫙",name:"Biryani Masala",qty:"2.5 tbsp"},{ico:"🌿",name:"Mint & Coriander",qty:"large handful"},{ico:"🌸",name:"Saffron in warm milk",qty:"generous pinch"},{ico:"🛢️",name:"Ghee",qty:"4 tbsp"},{ico:"🌿",name:"Whole Spices",qty:"bay leaf, cloves, star anise"},{ico:"🧂",name:"Salt",qty:"to taste"}],steps:["<strong>Marinate chicken:</strong> Mix with curd, garlic-ginger paste, biryani masala, salt, and mint. Marinate 2–4 hours.","<strong>Crispy onions:</strong> Deep fry sliced onions in ghee until dark golden and crispy (birista).","<strong>Cook chicken:</strong> In same pot, cook marinated chicken until 80% done. Add tomatoes and half the fried onions.","<strong>Parboil rice:</strong> Boil rice in salted water with whole spices until 60% done. Drain immediately.","<strong>Layer:</strong> Spread chicken masala. Layer rice. Add fried onions, mint, coriander, saffron milk, ghee.","<strong>Dum cook:</strong> Seal with foil and lid. High heat 4 mins, then lowest heat 25 mins. Rest 10 mins."],tip:"💡 <b>Chef's Tip:</b> Always use bone-in chicken for biryani — the marrow enriches the gravy with unbeatable depth."},
+  {n:"Tandoori Chicken",t:"55 mins",c:"360 kcal",r:"4.8",em:"🍖",img:"https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=500&q=80",bg:"linear-gradient(135deg,#FFC3A0,#FF6B35)",ing:[{ico:"🍗",name:"Chicken legs & thighs",qty:"1 kg"},{ico:"🥛",name:"Hung Yogurt",qty:"1 cup"},{ico:"🌶️",name:"Kashmiri Red Chilli",qty:"2 tbsp"},{ico:"🧄",name:"Garlic-Ginger Paste",qty:"2 tbsp"},{ico:"🍋",name:"Lemon Juice",qty:"2 tbsp"},{ico:"🫙",name:"Tandoori Masala",qty:"2 tbsp"},{ico:"🫙",name:"Cumin Powder",qty:"1 tsp"},{ico:"🛢️",name:"Mustard Oil",qty:"2 tbsp"},{ico:"🌿",name:"Carom Seeds (Ajwain)",qty:"½ tsp"},{ico:"🧂",name:"Salt",qty:"to taste"},{ico:"🧅",name:"Onion rings & lemon",qty:"to serve"}],steps:["<strong>Score the chicken:</strong> Make deep diagonal cuts so marinade reaches the bone.","<strong>First marinade:</strong> Rub with lemon juice, salt, and red chilli. Rest 30 mins.","<strong>Second marinade:</strong> Mix hung yogurt, garlic-ginger paste, tandoori masala, cumin, ajwain, mustard oil. Coat completely. Marinate minimum 4 hours.","<strong>Preheat oven:</strong> Heat to 220°C. Place chicken on wire rack over foil-lined tray.","<strong>Roast:</strong> Cook 25 mins. Flip, baste with butter, roast another 15–20 mins until charred at edges.","<strong>Serve:</strong> Rest 5 mins. Serve on charred onion rings with mint chutney and lemon."],tip:"💡 <b>Chef's Tip:</b> Heat mustard oil to smoking point then let it cool before adding to marinade — this removes pungency and deepens the authentic flavour."},
+  {n:"Fish Curry",t:"40 mins",c:"310 kcal",r:"4.6",em:"🐟",img:"https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&q=80",bg:"linear-gradient(135deg,#A1C4FD,#6EA8E0)",ing:[{ico:"🐟",name:"Fish pieces (Rohu/Pomfret)",qty:"500g"},{ico:"🥥",name:"Coconut Milk",qty:"1 cup"},{ico:"🍅",name:"Tomatoes",qty:"2 medium"},{ico:"🧅",name:"Onion",qty:"2 medium"},{ico:"🧄",name:"Garlic",qty:"6 cloves"},{ico:"🌿",name:"Ginger",qty:"1 inch"},{ico:"🌶️",name:"Red Chilli Powder",qty:"1.5 tsp"},{ico:"🫙",name:"Coriander Powder",qty:"1.5 tsp"},{ico:"🟡",name:"Turmeric",qty:"½ tsp"},{ico:"🌿",name:"Curry Leaves",qty:"10–12"},{ico:"🫙",name:"Mustard Seeds",qty:"1 tsp"},{ico:"🛢️",name:"Coconut Oil",qty:"3 tbsp"}],steps:["<strong>Marinate fish:</strong> Rub with turmeric, salt, and chilli powder. Marinate 15 mins.","<strong>Fry fish:</strong> Shallow fry in coconut oil until golden on both sides. Remove and set aside.","<strong>Prepare base:</strong> In same pan, add mustard seeds and curry leaves. Once they splutter, add onions until golden.","<strong>Add spices:</strong> Add garlic-ginger paste, tomatoes, turmeric, red chilli, coriander powder. Cook until tomatoes break down.","<strong>Add coconut milk:</strong> Pour in coconut milk. Bring to a gentle simmer. Season with salt.","<strong>Add fish:</strong> Carefully add fried fish. Simmer on low heat 8–10 mins. Garnish with coriander."],tip:"💡 <b>Chef's Tip:</b> Never boil fish curry vigorously — a gentle simmer keeps pieces intact and prevents them turning rubbery."},
+  {n:"Mutton Rogan Josh",t:"90 mins",c:"490 kcal",r:"4.8",em:"🫕",img:"https://images.unsplash.com/photo-1545247181-516773cae754?w=500&q=80",bg:"linear-gradient(135deg,#FFB347,#C0392B)",ing:[{ico:"🥩",name:"Mutton (bone-in)",qty:"750g"},{ico:"🧅",name:"Onion (thinly sliced)",qty:"3 large"},{ico:"🥛",name:"Curd (whisked)",qty:"½ cup"},{ico:"🌶️",name:"Kashmiri Red Chilli",qty:"3 tsp"},{ico:"🧄",name:"Garlic",qty:"8 cloves"},{ico:"🌿",name:"Ginger",qty:"2 inch"},{ico:"🛢️",name:"Mustard Oil",qty:"4 tbsp"},{ico:"🌿",name:"Whole Spices",qty:"black cardamom, cloves, cinnamon"},{ico:"🫙",name:"Fennel Powder",qty:"2 tsp"},{ico:"🫙",name:"Dry Ginger Powder",qty:"1 tsp"},{ico:"🫙",name:"Garam Masala",qty:"1 tsp"},{ico:"🧂",name:"Salt",qty:"to taste"}],steps:["<strong>Heat mustard oil:</strong> Heat to smoking point, then cool slightly to remove bitterness.","<strong>Temper & fry onions:</strong> Add whole spices, let crackle. Add onions, cook deep golden (~15 mins).","<strong>Brown mutton:</strong> Add mutton pieces and brown on all sides on high heat to seal in juices.","<strong>Add masala:</strong> Add garlic-ginger paste, Kashmiri chilli, fennel powder, dry ginger. Cook 8 mins.","<strong>Add curd:</strong> Lower heat. Add whisked curd one spoon at a time, stirring constantly. Cook 5 mins.","<strong>Slow cook:</strong> Add 1 cup warm water and salt. Cover and cook on very low heat 45–55 mins. Sprinkle garam masala."],tip:"💡 <b>Chef's Tip:</b> Authentic Kashmiri Rogan Josh gets its deep red colour from Kashmiri chilli alone — not from tomatoes."},
+  {n:"Chicken Pasta",t:"25 mins",c:"390 kcal",r:"4.5",em:"🍝",img:"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=500&q=80",bg:"linear-gradient(135deg,#FAD7A0,#E59866)",ing:[{ico:"🍝",name:"Penne or Fusilli",qty:"200g"},{ico:"🍗",name:"Chicken Breast (sliced)",qty:"250g"},{ico:"🧄",name:"Garlic (minced)",qty:"5 cloves"},{ico:"🍅",name:"Tomato Puree",qty:"½ cup"},{ico:"🧅",name:"Onion",qty:"1 medium"},{ico:"🌿",name:"Fresh Basil / Herbs",qty:"generous"},{ico:"🧀",name:"Parmesan",qty:"¼ cup"},{ico:"🫒",name:"Olive Oil",qty:"3 tbsp"},{ico:"🌶️",name:"Red Chilli Flakes",qty:"½ tsp"},{ico:"🫙",name:"Italian Seasoning",qty:"1.5 tsp"},{ico:"🧂",name:"Salt & Black Pepper",qty:"to taste"},{ico:"🥛",name:"Pasta water (reserved)",qty:"½ cup"}],steps:["<strong>Boil pasta:</strong> Cook in heavily salted water until al dente. Reserve ½ cup pasta water before draining.","<strong>Cook chicken:</strong> Season with salt, pepper, Italian seasoning. Sear in hot olive oil until golden (~4 mins per side). Rest and slice.","<strong>Make sauce:</strong> In same pan, sauté onion 3 mins. Add garlic and chilli. Add tomato puree, cook 5 mins.","<strong>Combine:</strong> Add drained pasta. Toss well, adding pasta water bit by bit for silky consistency.","<strong>Add chicken:</strong> Fold in sliced chicken. Cook together 2 mins.","<strong>Finish:</strong> Remove from heat. Stir in basil and half the parmesan. Top with remaining parmesan."],tip:"💡 <b>Chef's Tip:</b> Pasta water is liquid gold — the starch binds the sauce to every piece of pasta perfectly. Never skip saving it!"},
+];
+
+// ═══ AI SUGGESTIONS on load ═══
+const suggestions=[
+  "paneer, spinach, cream, garlic",
+  "chicken, tomato, cashew, cream",
+  "potato, onion, spices, yogurt",
+  "egg, cheese, mushroom, herbs",
+  "rice, coconut milk, vegetables",
+  "lentils, ginger, turmeric, ghee"
+];
+function loadSuggestions(){
+  const el=document.getElementById('aiSugChips');
+  el.innerHTML=suggestions.map(s=>`<div class="ai-sug-chip" onclick="useSuggestion('${s}')">${s}</div>`).join('');
+  document.getElementById('aiSuggestions').classList.add('show');
+}
+function useSuggestion(s){
+  document.getElementById('aiIngredients').value=s;
+  generateRecipe();
+}
+loadSuggestions();
+
+// ═══ ACTIVE PILL ═══
+let activePill='All';
+function setPill(el){
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  activePill=el.textContent.trim();
+}
+
+// ═══ GENERATE RECIPE ═══
+async function generateRecipe(){
+  const ing=document.getElementById('aiIngredients').value.trim();
+  if(!ing){document.getElementById('aiIngredients').focus();return;}
+  const cuisine=document.getElementById('aiCuisine').value.replace(/[🇮🇳🇮🇹🇨🇳🇲🇽🌍]/gu,'').trim();
+  const servings=document.getElementById('aiServings').value;
+  const difficulty=document.getElementById('aiDifficulty').value;
+  const diet=activePill;
+
+  const btn=document.getElementById('genBtn');
+  btn.disabled=true;
+  document.getElementById('genBtnText').textContent='⏳ Generating...';
+  document.getElementById('aiResult').classList.remove('show');
+  document.getElementById('aiLoading').classList.add('show');
+
+  const loadingMsgs=["Analysing your ingredients...","Finding the perfect dish...","Crafting step-by-step guide...","Adding chef's secrets..."];
+  let li=0;
+  const lt=setInterval(()=>{
+    document.getElementById('aiLoadingStep').textContent=loadingMsgs[li%loadingMsgs.length];
+    li++;
+  },1200);
+
+  const systemPrompt=`You are a professional chef AI. Always respond in valid JSON only. No markdown, no explanation outside JSON.`;
+  const userPrompt=`Create a ${diet} ${cuisine} recipe using these ingredients: ${ing}. Servings: ${servings}. Difficulty: ${difficulty}.
+Respond ONLY with this exact JSON structure:
+{
+  "name": "Recipe Name",
+  "time": "X mins",
+  "calories": "XXX kcal",
+  "servings": "${servings}",
+  "difficulty": "${difficulty}",
+  "ingredients": [
+    {"name": "Ingredient name", "qty": "amount"}
+  ],
+  "steps": [
+    "Step 1 description",
+    "Step 2 description"
+  ],
+  "tip": "One professional chef tip"
+}`;
+
+  try {
+    const raw=await callGemini(systemPrompt, userPrompt, 4000);
+    clearInterval(lt);
+    const clean=raw.replace(/```json|```/g,'').trim();
+    const recipe=JSON.parse(clean);
+    renderAIRecipe(recipe);
+  } catch(e){
+    clearInterval(lt);
+    document.getElementById('aiLoadingStep').textContent='❌ Error: '+e.message+'. Please try again.';
+    setTimeout(()=>{
+      document.getElementById('aiLoading').classList.remove('show');
+      btn.disabled=false;
+      document.getElementById('genBtnText').textContent='✦ Generate My Recipe';
+    },3000);
+    return;
+  }
+
+  document.getElementById('aiLoading').classList.remove('show');
+  btn.disabled=false;
+  document.getElementById('genBtnText').textContent='✦ Generate My Recipe';
+}
+
+function renderAIRecipe(r){
+  document.getElementById('aiDishName').textContent='🍽️ '+r.name;
+  document.getElementById('aiDishMeta').innerHTML=
+    `<span>⏱ ${r.time}</span><span>⚡ ${r.calories}</span><span>🍽️ ${r.servings}</span><span>📊 ${r.difficulty}</span>`;
+  document.getElementById('aiIngList').innerHTML=
+    r.ingredients.map(i=>`<div class="ai-ing-item">${i.name}<span>${i.qty}</span></div>`).join('');
+  document.getElementById('aiStepsList').innerHTML=
+    r.steps.map((s,i)=>`<li class="ai-step"><div class="ai-step-num">${i+1}</div><div class="ai-step-text">${s}</div></li>`).join('');
+  document.getElementById('aiTipBox').innerHTML=`💡 <b>Chef's Tip:</b> ${r.tip}`;
+  document.getElementById('aiResult').classList.add('show');
+  document.getElementById('aiResult').scrollIntoView({behavior:'smooth',block:'nearest'});
+  currentAIRecipe = r; // store for shopping list
+}
+
+// ═══ WEEKLY MEAL PLANNER ═══
+const days=['MON','TUE','WED','THU','FRI','SAT','SUN'];
+let currentPlan=null;
+
+async function generateMealPlan(){
+  const diet=document.getElementById('planDiet').value;
+  const cuisine=document.getElementById('planCuisine').value;
+  const calories=document.getElementById('planCalories').value;
+  const btn=document.getElementById('planBtn');
+  btn.disabled=true;
+  document.getElementById('planBtnText').textContent='⏳ Planning...';
+  document.getElementById('planLoading').classList.add('show');
+  document.getElementById('planSummary').style.display='none';
+  renderEmptyPlan();
+
+  const systemPrompt=`You are a professional nutritionist and chef. Always respond in valid JSON only. No markdown, no text outside JSON.`;
+  const userPrompt=`Create a 7-day ${diet} meal plan with ${cuisine} cuisine at approximately ${calories} calories per day.
+Respond ONLY with this exact JSON (no other text):
+{
+  "totalCalories": ${calories},
+  "days": [
+    {
+      "day": "MON",
+      "breakfast": {"name": "Dish name", "calories": "XXX kcal"},
+      "lunch": {"name": "Dish name", "calories": "XXX kcal"},
+      "dinner": {"name": "Dish name", "calories": "XXX kcal"}
+    }
+  ],
+  "weeklyIngredients": [
+    {"name": "Ingredient name", "qty": "amount"}
+  ]
+}
+Include all 7 days. Vary the dishes. Combine all necessary ingredients for the entire week into weeklyIngredients without duplicates.`;
+
+  try {
+    const raw=await callGemini(systemPrompt, userPrompt, 8000);
+    const clean=raw.replace(/```json|```/g,'').trim();
+    currentPlan=JSON.parse(clean);
+    renderMealPlan(currentPlan);
+    document.getElementById('planShopBtn').style.display='inline-flex';
+  } catch(e){
+    document.getElementById('planLoading').classList.remove('show');
+    btn.disabled=false;
+    document.getElementById('planBtnText').textContent='✦ Generate Meal Plan';
+    alert('Error generating meal plan: '+e.message+'. Please try again.');
+    return;
+  }
+
+  document.getElementById('planLoading').classList.remove('show');
+  btn.disabled=false;
+  document.getElementById('planBtnText').textContent='✦ Generate Meal Plan';
+}
+
+function renderEmptyPlan(){
+  const grid=document.getElementById('plannerGrid');
+  grid.innerHTML=days.map(d=>`
+    <div class="plan-day">
+      <div class="plan-day-label">${d}</div>
+      <div class="plan-meal loading"><div class="plan-meal-type">Breakfast</div><div class="plan-meal-name">Generating...</div></div>
+      <div class="plan-meal loading"><div class="plan-meal-type">Lunch</div><div class="plan-meal-name">Generating...</div></div>
+      <div class="plan-meal loading"><div class="plan-meal-type">Dinner</div><div class="plan-meal-name">Generating...</div></div>
+    </div>`).join('');
+}
+
+function renderMealPlan(plan){
+  const grid=document.getElementById('plannerGrid');
+  grid.innerHTML=plan.days.map(d=>`
+    <div class="plan-day">
+      <div class="plan-day-label">${d.day}</div>
+      <div class="plan-meal">
+        <div class="plan-meal-type">🌅 Breakfast</div>
+        <div class="plan-meal-name">${d.breakfast.name}</div>
+        <div class="plan-meal-cal">${d.breakfast.calories}</div>
+      </div>
+      <div class="plan-meal">
+        <div class="plan-meal-type">☀️ Lunch</div>
+        <div class="plan-meal-name">${d.lunch.name}</div>
+        <div class="plan-meal-cal">${d.lunch.calories}</div>
+      </div>
+      <div class="plan-meal">
+        <div class="plan-meal-type">🌙 Dinner</div>
+        <div class="plan-meal-name">${d.dinner.name}</div>
+        <div class="plan-meal-cal">${d.dinner.calories}</div>
+      </div>
+    </div>`).join('');
+
+  // Summary stats
+  const totalMeals=plan.days.length*3;
+  document.getElementById('planSummaryBox').innerHTML=`
+    <div class="plan-stat"><div class="plan-stat-val">7</div><div class="plan-stat-lbl">Days Planned</div></div>
+    <div class="plan-stat"><div class="plan-stat-val">${totalMeals}</div><div class="plan-stat-lbl">Total Meals</div></div>
+    <div class="plan-stat"><div class="plan-stat-val">${plan.totalCalories}</div><div class="plan-stat-lbl">kcal / Day</div></div>
+    <div class="plan-stat"><div class="plan-stat-val">${plan.days.length*plan.totalCalories}</div><div class="plan-stat-lbl">Weekly kcal</div></div>`;
+  document.getElementById('planSummary').style.display='block';
+}
+
+function exportPlan(){
+  if(!currentPlan){alert('Please generate a meal plan first!');return;}
+  let txt='🍽️ ChefAI Weekly Meal Plan\n'+'═'.repeat(40)+'\n\n';
+  currentPlan.days.forEach(d=>{
+    txt+=`📅 ${d.day}\n`;
+    txt+=`  🌅 Breakfast: ${d.breakfast.name} (${d.breakfast.calories})\n`;
+    txt+=`  ☀️  Lunch:     ${d.lunch.name} (${d.lunch.calories})\n`;
+    txt+=`  🌙 Dinner:    ${d.dinner.name} (${d.dinner.calories})\n\n`;
+  });
+  txt+=`Target: ~${currentPlan.totalCalories} kcal/day\nGenerated by ChefAI × Gemini 1.5 Flash`;
+  const blob=new Blob([txt],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='ChefAI_MealPlan.txt';
+  a.click();
+}
+
+// ═══ DISH CARDS ═══
+function card(d,isV){
+  const badge=isV?`<span class="bdg bdg-g">Veg</span>`:`<span class="bdg bdg-r">Non-Veg</span>`;
+  const safeD=JSON.stringify(d).replace(/'/g,"&#39;").replace(/"/g,"&quot;");
+  return `<div class="dcard" onclick="openModal(JSON.parse(this.dataset.d),${isV})" data-d="${safeD}">
+    <div class="dcard-img">
+      <img src="${d.img}" alt="${d.n}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="img-fb" style="background:${d.bg}">${d.em}</div>
+      ${badge}
+      <button class="heart" onclick="event.stopPropagation();this.textContent=this.textContent==='♡'?'♥':'♡';this.style.color=this.textContent==='♥'?'#E85D04':''">♡</button>
+    </div>
+    <div class="dcard-body">
+      <h3>${d.n}</h3>
+      <div class="dcard-meta">
+        <span class="dm">⏱ ${d.t}</span>
+        <span class="dm">⚡ ${d.c}</span>
+        <span class="dm star">★ ${d.r}</span>
+      </div>
+      <button class="btn-view" onclick="event.stopPropagation();openModal(JSON.parse(this.closest('.dcard').dataset.d),${isV})">📖 View Recipe & Ingredients</button>
+    </div>
+  </div>`;
+}
+document.getElementById('vr').innerHTML=veg.map(d=>card(d,true)).join('');
+document.getElementById('nr').innerHTML=nv.map(d=>card(d,false)).join('');
+
+// ═══ MODAL ═══
+function openModal(d,isV){
+  const img=document.getElementById('mImg');
+  const fb=document.getElementById('mFb');
+  img.src=d.img; img.style.display='block'; fb.style.display='none';
+  img.onerror=function(){this.style.display='none';fb.style.display='flex';fb.style.background=d.bg;fb.textContent=d.em;};
+  const bdg=document.getElementById('mBdg');
+  bdg.textContent=isV?'🥗 Vegetarian':'🍗 Non-Vegetarian';
+  bdg.style.background=isV?'#16A34A':'#DC2626';
+  bdg.style.color='#fff';
+  document.getElementById('mTitle').textContent=d.n;
+  document.getElementById('mStats').innerHTML=
+    `<div class="mstat"><span>⏱</span> ${d.t}</div><div class="mstat"><span>⚡</span> ${d.c}</div><div class="mstat"><span>★</span> ${d.r} Rating</div><div class="mstat"><span>🍽️</span> Serves 4</div>`;
+  document.getElementById('mIngredients').innerHTML=
+    d.ing.map(i=>`<div class="ing-chip"><span class="ico">${i.ico}</span><span class="itext">${i.name}</span><span class="qty">${i.qty}</span></div>`).join('');
+  document.getElementById('mSteps').innerHTML=
+    d.steps.map((s,i)=>`<li class="step"><div class="step-num">${i+1}</div><div class="step-text">${s}</div></li>`).join('');
+  document.getElementById('mTip').innerHTML=d.tip;
+  
+  if (!document.getElementById('mShopBtn')) {
+    const btn = document.createElement('button');
+    btn.id = 'mShopBtn';
+    btn.className = 'btn-gen';
+    btn.style.marginTop = '24px';
+    btn.style.width = '100%';
+    btn.style.maxWidth = '100%';
+    btn.textContent = '🛒 Add to Shopping List';
+    btn.onclick = addToShoppingM;
+    document.querySelector('.modal-body').appendChild(btn);
+  }
+  
+  currentModalDish = d;
+  document.getElementById('recipeModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(e){if(e.target===document.getElementById('recipeModal')) closeModalDirect();}
+function closeModalDirect(){document.getElementById('recipeModal').classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeModalDirect();});
+function tc(id){document.getElementById(id).classList.toggle('done');}
+
+// ═══ SHOPPING LIST LOGIC ═══
+let shoppingList = [];
+let currentModalDish = null;
+
+function renderShoppingList() {
+  const container = document.getElementById('shopCard');
+  const countEl = document.getElementById('shopCount');
+  
+  if (shoppingList.length === 0) {
+    container.innerHTML = `<div class="shop-empty">Your shopping list is empty!<br><br><span style="font-size:12px;font-weight:400;">Browse dishes, generate recipes, or plan meals to add ingredients here.</span></div>`;
+    countEl.textContent = '0 items';
+    return;
+  }
+  
+  let html = '';
+  let pendingCount = 0;
+  
+  shoppingList.forEach((item, index) => {
+    const isDone = item.done ? 'done' : '';
+    const checked = item.done ? 'checked' : '';
+    if (!item.done) pendingCount++;
+    
+    html += `<div class="si ${isDone}">
+      <input type="checkbox" ${checked} onchange="toggleShopItem(${index})">
+      <span class="iname">${item.name}</span>
+      <span class="iqty">${item.qty}</span>
+      <button class="btn-remove" onclick="removeShopItem(${index})">✕</button>
+    </div>`;
+  });
+  
+  container.innerHTML = html;
+  countEl.textContent = `${pendingCount} of ${shoppingList.length} items remaining`;
+}
+
+function addIngredientsToList(ingredientsArray, sourceName) {
+  let addedCount = 0;
+  ingredientsArray.forEach(ing => {
+    // Avoid exact duplicates (name + qty combination)
+    const exists = shoppingList.find(i => i.name.toLowerCase() === ing.name.toLowerCase() && i.qty === ing.qty);
+    if (!exists) {
+      shoppingList.push({ name: ing.name, qty: ing.qty, done: false });
+      addedCount++;
+    }
+  });
+  
+  renderShoppingList();
+  
+  const note = document.getElementById('shopNote');
+  if (addedCount > 0) {
+    note.textContent = `✅ Successfully added ${addedCount} new ingredients from ${sourceName}!`;
+    note.style.color = 'var(--veg)';
+    setTimeout(() => { note.textContent = "Shopping list tracks all your added ingredients."; note.style.color = "var(--muted)"; }, 4000);
+  } else {
+    note.textContent = `ℹ️ Ingredients from ${sourceName} are already in your list.`;
+    setTimeout(() => { note.textContent = "Shopping list tracks all your added ingredients."; note.style.color = "var(--muted)"; }, 4000);
+  }
+}
+
+function toggleShopItem(index) {
+  shoppingList[index].done = !shoppingList[index].done;
+  renderShoppingList();
+}
+
+function removeShopItem(index) {
+  shoppingList.splice(index, 1);
+  renderShoppingList();
+}
+
+function clearShoppingList() {
+  if (shoppingList.length === 0) return;
+  if (confirm("Are you sure you want to clear your entire shopping list?")) {
+    shoppingList = [];
+    renderShoppingList();
+  }
+}
+
+function copyShoppingList() {
+  const pending = shoppingList.filter(i => !i.done);
+  if (pending.length === 0) {
+    alert("No remaining items to copy!");
+    return;
+  }
+  
+  const txt = "🛒 ChefAI Shopping List\n" + "═".repeat(30) + "\n" + pending.map(i => `[ ] ${i.name} - ${i.qty}`).join("\n");
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = document.querySelector('.btn-f');
+    const oldText = btn.innerHTML;
+    btn.innerHTML = '✅ Copied!';
+    setTimeout(() => btn.innerHTML = oldText, 2000);
+  });
+}
+
+function addToShoppingM() {
+  if (currentModalDish) {
+    addIngredientsToList(currentModalDish.ing, `"${currentModalDish.n}"`);
+    closeModalDirect();
+    document.getElementById('shopping').scrollIntoView({behavior:'smooth'});
+  }
+}
+
+function addToShoppingAI() {
+  if (currentAIRecipe && currentAIRecipe.ingredients) {
+    addIngredientsToList(currentAIRecipe.ingredients, `AI Recipe "${currentAIRecipe.name}"`);
+    document.getElementById('shopping').scrollIntoView({behavior:'smooth'});
+  }
+}
+
+function addToShoppingPlan() {
+  if (currentPlan && currentPlan.weeklyIngredients) {
+    addIngredientsToList(currentPlan.weeklyIngredients, "Weekly Meal Plan");
+    document.getElementById('shopping').scrollIntoView({behavior:'smooth'});
+  }
+}
+
+// Init empty shopping list UI
+renderShoppingList();
+</script>
+</body>
+</html>
